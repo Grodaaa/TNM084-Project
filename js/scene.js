@@ -1,6 +1,7 @@
 var container, stats;
 var camera, scene, renderer, particle;
 var mouseX = 0, mouseY = 0;
+var allParticles = new Array();
 
 var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
@@ -23,12 +24,15 @@ function init() {
 		blending: THREE.AdditiveBlending
 	} );
 
+	allParticles[1000] = new Array();
+
 	for ( var i = 0; i < 1000; i++ ) {
 
 		particle = new THREE.Sprite( material );
 
 		initParticle( particle, i * 10 );
 
+		allParticles[i] = particle;
 		scene.add( particle );
 	}
 
@@ -75,7 +79,7 @@ function generateSprite() {
 	var gradient = context.createRadialGradient( canvas.width / 2, canvas.height / 2, 0, canvas.width / 2, canvas.height / 2, canvas.width / 2 );
 	gradient.addColorStop( 0, 'rgba(255,255,255,1)' );
 	gradient.addColorStop( 0.2, 'rgba(0,255,255,1)' );
-	gradient.addColorStop( 0.5, 'rgba(0,0,64,1)' );
+	gradient.addColorStop( 0.45, 'rgba(0,0,64,1)' );
 	gradient.addColorStop( 1, 'rgba(0,0,0,1)' );
 
 	context.fillStyle = gradient;
@@ -99,9 +103,11 @@ function initParticle( particle, delay ) {
 		.onComplete( initParticle )
 		.start();
 
+
 	new TWEEN.Tween( particle.position )
 		.delay( delay )
-		.to( { x: Math.random() * 4000 - 2000, y: Math.random() * 1000 - 500, z: Math.random() * 4000 - 2000 }, 10000 )
+		.to( { x: Math.random() * 4000 - 2000, y: Math.random() * 4000 - 2000, z: Math.random() * 4000 - 2000 }, 10000 )
+		//.to( { x: Math.random() * (boost+4000), y: Math.random() * (boost+4000), z: Math.random() * (boost+4000) }, 10000 )
 		.start();
 
 	new TWEEN.Tween( particle.scale )
@@ -163,6 +169,14 @@ function render() {
 	camera.position.x += ( mouseX - camera.position.x ) * 0.05;
 	camera.position.y += ( - mouseY - camera.position.y ) * 0.05;
 	camera.lookAt( scene.position );
+
+	for(var i = 0; i < 1000; i++){
+		allParticles[i].scale.x = (Math.random() * 32) + (boost*0.5);
+		allParticles[i].scale.y = (Math.random() * 32) + (boost*0.5);
+	}
+
+	/*this.particle.scale.x = (Math.random() * 32 + 16) * boost;
+	this.particle.scale.y = (Math.random() * 32 + 16) * boost;*/
 
 	if(Boolean(soundCheck))
 		renderer.render( scene, camera );
